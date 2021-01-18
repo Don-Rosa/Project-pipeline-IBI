@@ -13,7 +13,7 @@ do
       $boucle = [${array[1]} != md5sum $filename]
       if [ $boucle ]
       then
-        rm $filename
+        rm $1/$filename
       fi
     done
   fi
