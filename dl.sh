@@ -17,7 +17,7 @@ do
       do
         filename=$(basename $path)
         printf "Téléchargement de : %s \n" $filename
-        wget -P $1  -nc --no-clobber "ftp://"$path
+        wget -P $1  -nc --no-clobber "ftp://"$path #marche stp
         md5=$(md5sum $1'/'$filename | cut -d' ' -f 1) #md5sum rajoute le nom du ficher en plus du hash code--> on ne garde que ce dernier
         failed_md5=$([ "echo ${array[1]} | cut -d';' -f $i" != "$md5" ])
 
