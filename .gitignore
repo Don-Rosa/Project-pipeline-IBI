@@ -1,3 +1,6 @@
 *.gz
 *.fastq
 *.sam
+bwa-master/
+gatk-4.1.9.0/
+S288C_reference_genome_R64-2-1_20150113/
