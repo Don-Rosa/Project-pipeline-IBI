@@ -14,12 +14,12 @@ do
       if [ "${#nb_read[@]}" == 1 ]
       then
        filename=$(basename $"${nb_read[0]}")
-        bwa mem $3 $1'/'$filename  > $1'/'"${array[0]}".sam
+       bwa mem $3 $1'/'$filename  > $1'/'"${array[0]}".bam
       elif [ "${#nb_read[@]}" == 2 ]  #Normalement 1 ou 2 sont les seules valeurs possibles de "${#nb_read[@]}" la taille du tableau
       then
         filename0=$(basename $"${nb_read[0]}")
         filename1=$(basename $"${nb_read[1]}")
-        bwa mem $3 $1'/'$filename0 $1'/'$filename1  > $1'/'"${array[0]}".sam
+        bwa mem $3 $1'/'$filename0 $1'/'$filename1  > $1'/'"${array[0]}".bam
       fi
   fi
 done
