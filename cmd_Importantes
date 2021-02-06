@@ -1,0 +1,28 @@
+
+Dans l'ordre d'usage:
+
+bwa mem ${genome_ref}.fsa -R @RG\tID:PRJEB24932\tPL:ILLUMINA\tPI:0\tSM:${Run Accession}\tLB:1  ${read1}.fastq.gz ${read2 (Si il existe)}.fastq.gz  > ${out}.sam
+								--> Map des fastq au génome de reference 
+								--> -R ajoute les read group, ID = PRJEB24932 sm = ${Run Accession}
+								--> Je sais pas si c'est bien
+
+samtools view -H ${ficher}.sam | grep '^@RG'
+samtools view -H ${ficher}.bam | grep '^@RG'
+			--> Affiche les read group du fichier
+
+samtools view -bt ${reference}.fsa ${fichier}.sam > ${fichier}.bam
+								--> passe d'un .sam à un .bam
+
+
+
+samtools sort -o ${fichier}_sorted.bam ${fichier}.bam
+					--> Trie un .bam selon l'ordre génétique
+
+samtools flagstat  ${ficher}.bam
+				--> Extraits 2-3 informations intéressantes sur un .bam
+
+gatk MarkDuplicatesSpark -I ${input}.bam -O {output}.bam -OBI
+
+				--> marque les duplicats, pour ce que ça veut dire
+
+
