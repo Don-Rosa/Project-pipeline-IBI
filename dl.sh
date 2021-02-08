@@ -8,7 +8,7 @@ mkdir -p $1
 printf "\nTéléchargement des fastq.gz de: $2\n\n" >> $1"/dl_log.out"
 for line in $(cat $2)
 do
-  IFS=$'\t' read -r -a array <<< "$line"    # Divise ligne en un tableau,le séparateur est \n, la tabulation
+  IFS=$'\t' read -r -a array <<< "$line"    # Divise ligne en un tableau,le séparateur est \t, la tabulation
   if [ "${array[3]}" != "fastq_ftp" ] && [ "${array[3]}" != "" ]  # On zappe la première ligne et les lignes vides
   then
     IFS=$';'
