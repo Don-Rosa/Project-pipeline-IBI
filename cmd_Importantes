@@ -1,7 +1,7 @@
 
 Dans l'ordre d'usage:
 
-bwa mem ${genome_ref}.fsa -R '@RG\tID:PRJEB24932\tPL:ILLUMINA\tPI:0\tSM:${Run Accession}\tLB:1'  ${read1}.fastq.gz ${read2 (Si il existe)}.fastq.gz  > ${out}.sam
+bwa mem ${genome_ref}.fsa -R '@RG\tID:${Run Accession}\tPL:ILLUMINA\tPI:0\tSM:${Run Accession}\tLB:1'  ${read1}.fastq.gz ${read2 (Si il existe)}.fastq.gz  > ${out}.sam
 								--> Map des fastq au génome de reference 
 								--> -R ajoute les read group, ID = ${Run Accession} sm = ${Run Accession}
 								--> Je sais pas si c'est bien
