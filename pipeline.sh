@@ -25,12 +25,21 @@ run_with_lock(){
 
 usage()
 {
-    echo "usage: <command> options:<p:Nombre max de shell en parallèle> <d>(download files only) <f> (download and fast forward cleaning)"
+    echo "usage: <command> options:
+    <p:Nombre max de shells en parallèle>
+    <d>(download files only)
+    <f> (download and fast forward cleaning)
+    <b:x> <e:y> (télécharge et/ou traite les fichers entre les lignes x et y)
+    <k> (conserve les fichers intermediaires)"
 }
 
 maxN=1
 unset dl_opt
-while getopts p:df option
+begin=0
+i=0
+unset end # end unset --> pas de limite supérieure
+unset keep
+while getopts p:dfb:e:k option
 do
     case $option in
             p)
@@ -39,6 +48,12 @@ do
               dl_opt="dl_files_only";;
             f)
               dl_opt="fast_forward";;
+            b)
+              begin="$OPTARG";;
+            e)
+              end="$OPTARG";;
+            k)
+              keep=1;;
             *)
             usage
             exit;;
@@ -57,9 +72,12 @@ then
   IFS=$'\n'
   for line in $(cat $tsv)
   do
-    run_with_lock bash cleandata.sh $dir "$line" $fasta
+    if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
+    then
+      run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
+    fi
+    ((i++))
   done
-  wait
 elif [ $dl_opt == "dl_files_only" ]
 then
   IFS=$'\n'
@@ -67,7 +85,11 @@ then
   printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> $dir"/dl_log.out"
   for line in $(cat $tsv)
   do
-    bash dl.sh $dir "$line"
+    if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
+    then
+      bash dl.sh $dir "$line"
+    fi
+    ((i++))
   done
 elif [ $dl_opt == "fast_forward" ]
 then
@@ -77,8 +99,13 @@ then
   printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> $dir"/dl_log.out"
   for line in $(cat $tsv)
   do
-    bash dl.sh $dir "$line"
-    run_with_lock bash cleandata.sh $dir "$line" $fasta
+    if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
+    then
+      bash dl.sh $dir "$line"
+      run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
+    fi
+    ((i++))
   done
-  wait
 fi
+
+wait
