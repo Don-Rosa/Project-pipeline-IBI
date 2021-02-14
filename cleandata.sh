@@ -1,8 +1,9 @@
 #!/bin/bash
-# utilisation ./cleandata.sh $1 $2 $3
+# utilisation ./cleandata.sh $1 $2 $3 $4
 # $1 le dossier où sont les fichers
 # $2 une ligne d'un ficher TSV formaté de la sorte: run_accession \t study_alias \t fastq_md5 \t fastq
 # $3 le chemin vers le genome de reference (déja indexé, à changer probablement)
+# $4 --> Si il n'est pas null on garde les fichers intermediaires
 # fastq et md5 peuvent contenir plusieurs liens séparé par des;
 
 #IFS=$'\n'
@@ -47,6 +48,7 @@ then
     then
       rm $dir'/'"${array[0]}".bam
     fi
+    bedtools genomecov -ibam $dir'/'"${array[0]}"_sorted.bam -bga > $dir'/'"${array[0]}"_cov
     gatk MarkDuplicatesSpark -I $dir'/'"${array[0]}"_sorted.bam -O $dir'/'"${array[0]}"_gatk.bam -OBI
 fi
 
