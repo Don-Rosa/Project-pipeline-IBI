@@ -8,7 +8,7 @@ outpoutdir=$dir"/Résultats"
 mkdir -p $outpoutdir
 
 outpout=$outpoutdir'/'"$filename"
-samtools flagstat $outpoutdir'/'"$filename"_sorted.bam > $outpout~.txt
+samtools flagstat $dir'/'"$filename"_sorted.bam > $outpout~.txt
 
 
 IFS=$'\n' read -d '' -r -a lines < $outpout~.txt
@@ -17,5 +17,5 @@ IFS=$'+' read mapped other <<< "${lines[4]}"
 IFS=$'(' read before after <<< "$other"
 IFS=$':' read percent _ <<< "$after"
 
-echo "$name : Mapped = $mapped  Total = $total Percent of mapped = $percent" >> $outpoutdir/flagstat.txt
+echo "$filename : Mapped = $mapped  Total = $total Percent of mapped = $percent" >> $outpoutdir/flagstat.txt
 rm -f $outpout~.txt
