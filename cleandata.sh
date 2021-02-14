@@ -47,6 +47,7 @@ then
     then
       rm $dir'/'"${array[0]}".bam
     fi
+    bash flagstat.sh $dir'/'"${array[0]}"_sorted.bam "${array[0]}"_sorted.bam
     gatk MarkDuplicatesSpark -I $dir'/'"${array[0]}"_sorted.bam -O $dir'/'"${array[0]}"_gatk.bam -OBI
 fi
 

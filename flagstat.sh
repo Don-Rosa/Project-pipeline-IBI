@@ -1,8 +1,11 @@
-file=$1
-outpoutdir=$2
-mkdir $outpoutdir #cacher l'erreur à terme
+#$1 chemin du fichier à analyser
+#$2 nom du fichier
 
-IFS=$'/' read _ name <<< $file
+file=$1
+name=$2
+outpoutdir="Résultat"
+mkdir -p $outpoutdir #cacher l'erreur à terme
+
 outpout=$outpoutdir'/'"$name"
 samtools flagstat $file > $outpout~.txt
 
@@ -13,5 +16,5 @@ IFS=$'+' read mapped other <<< "${lines[4]}"
 IFS=$'(' read before after <<< "$other"
 IFS=$':' read percent _ <<< "$after"
 
-echo "$name" : > echo "Mapped = $mapped" > echo "Total = $total" > echo "Percent of mapped = $percent" >> $outpoutdir/info.txt
+echo "$name" : > echo "Mapped = $mapped" > echo "Total = $total" > echo "Percent of mapped = $percent" >> $outpoutdir/flagstat.txt
 rm -f $outpout~.txt
