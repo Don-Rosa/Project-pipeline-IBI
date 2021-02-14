@@ -1,13 +1,14 @@
 #$1 chemin du fichier à analyser
 #$2 nom du fichier
 
-file=$1
-name=$2
-outpoutdir="Résultat"
-mkdir -p $outpoutdir #cacher l'erreur à terme
+dir=$1
+filename=$2
+outpoutdir=$dir"/Résultats"
 
-outpout=$outpoutdir'/'"$name"
-samtools flagstat $file > $outpout~.txt
+mkdir -p $outpoutdir
+
+outpout=$outpoutdir'/'"$filename"
+samtools flagstat $outpoutdir'/'"$filename"_sorted.bam > $outpout~.txt
 
 
 IFS=$'\n' read -d '' -r -a lines < $outpout~.txt
@@ -16,5 +17,5 @@ IFS=$'+' read mapped other <<< "${lines[4]}"
 IFS=$'(' read before after <<< "$other"
 IFS=$':' read percent _ <<< "$after"
 
-echo "$name" : > echo "Mapped = $mapped" > echo "Total = $total" > echo "Percent of mapped = $percent" >> $outpoutdir/flagstat.txt
+echo "$name : Mapped = $mapped  Total = $total Percent of mapped = $percent" >> $outpoutdir/flagstat.txt
 rm -f $outpout~.txt
