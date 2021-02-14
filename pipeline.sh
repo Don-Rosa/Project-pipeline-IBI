@@ -65,6 +65,9 @@ dir=$1
 tsv=$2                 # On explicite les parametres
 fasta=$3
 
+bwa index $fasta
+gatk CreateSequenceDictionary -R $fasta
+samtools faidx $fasta
 
 if [ -z "$dl_opt" ]
 then
