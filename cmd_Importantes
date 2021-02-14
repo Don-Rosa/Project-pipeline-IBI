@@ -38,7 +38,7 @@ gatk MarkDuplicatesSpark -I ${input}.bam -O {output}.bam -OBI
 bedtools genomecov -ibam ${fichier}.bam -bga > {output}
 			--> indique la couverture de chaque région génétique
 			--> le fichier bam doit être trié
-			
+
 
 gatk --java-options "-Xmx4g" HaplotypeCaller  -R ${reference}.fsa -I ${input}.bam -O ${output}.g.vcf.gz -ERC GVCF
-				---> Fait un fichier GVCF, option ERC GVCF pour grouper dans un même bloc les variants
+				---> Fait un fichier GVCF, option ERC GVCF pour grouper dans un même bloc les variants			

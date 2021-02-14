@@ -2,7 +2,7 @@
 # utilisation ./cleandata.sh $1 $2 $3 $4
 # $1 le dossier où sont les fichers
 # $2 une ligne d'un ficher TSV formaté de la sorte: run_accession \t study_alias \t fastq_md5 \t fastq
-# $3 le chemin vers le genome de reference (déja indexé, à changer probablement)
+# $3 le chemin vers le genome de reference, au format FASTA et pas fsa
 # $4 --> Si il n'est pas null on garde les fichers intermediaires
 # fastq et md5 peuvent contenir plusieurs liens séparé par des;
 
@@ -17,9 +17,9 @@ keep=$4
 
 IFS=$'\t' read -r -a array <<< "$tsvLine" #Divise ligne en un tableau,le séparateur est \t, la tabulation
 
-if [ "${array[3]}" != "fastq_ftp" ] && [ "${array[3]}" != "" ] #On zappe la première ligne et les lignes vides
+if [ "${array[2]}" != "fastq_ftp" ] && [ "${array[2]}" != "" ] #On zappe la première ligne et les lignes vides
 then
-    IFS=$';' read -r -a nb_read <<< "${array[3]}" #Divise la case en un tableau,le séparateur est ;
+    IFS=$';' read -r -a nb_read <<< "${array[2]}" #Divise la case en un tableau,le séparateur est ;
     if [ "${#nb_read[@]}" == 1 ]
     then
      filename=$(basename "${nb_read[0]}")

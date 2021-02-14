@@ -14,11 +14,11 @@ dir=$1
 tsvLine=$2                 # On explicite les parametres
 
 IFS=$'\t' read -r -a array <<< "$tsvLine"    # Divise ligne en un tableau,le séparateur est \t, la tabulation
-if [ "${array[3]}" != "fastq_ftp" ] && [ "${array[3]}" != "" ]  # On zappe la première ligne et les lignes vides
+if [ "${array[2]}" != "fastq_ftp" ] && [ "${array[2]}" != "" ]  # On zappe la première ligne et les lignes vides
 then
   IFS=$';'
-  read -r -a fastq_array <<< "${array[3]}"    # Divise la case en un tableau,le séparateur est ;
-  read -r -a md5_array <<< "${array[2]}"
+  read -r -a fastq_array <<< "${array[2]}"    # Divise la case en un tableau,le séparateur est ;
+  read -r -a md5_array <<< "${array[1]}"
   for ((i=0; i<"${#fastq_array[@]}"; i++))    # ${#fastq_array[@]} la taille du tableau
   do
       path="${fastq_array[i]}"
@@ -53,5 +53,5 @@ then
       fi
     done
   fi
-  
+
 #done
