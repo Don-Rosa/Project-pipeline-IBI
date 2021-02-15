@@ -23,7 +23,7 @@ then
     if [ "${#nb_read[@]}" == 1 ]
     then
      filename=$(basename "${nb_read[0]}")
-     bwa mem $fasta $dir'/'$filename  -R '@RG\tID:${array[0]}\tPL:ILLUMINA\tPI:0\tSM:${array[0]}\tLB:1' > $dir'/'"${array[0]}".sam
+     bwa mem -R '@RG\tID:${array[0]}\tPL:ILLUMINA\tPI:0\tSM:${array[0]}\tLB:1' $fasta $dir'/'$filename  > $dir'/'"${array[0]}".sam
      if [ -z "$keep" ]
      then
        rm $dir'/'$filename
@@ -32,7 +32,7 @@ then
     then
       filename0=$(basename "${nb_read[0]}")
       filename1=$(basename "${nb_read[1]}")
-      bwa mem $fasta $dir'/'$filename0 $1'/'$filename1 -R '@RG\tID:${array[0]}\tPL:ILLUMINA\tPI:0\tSM:${array[0]}\tLB:1' > $dir'/'"${array[0]}".sam
+      bwa mem -R '@RG\tID:${array[0]}\tPL:ILLUMINA\tPI:0\tSM:${array[0]}\tLB:1' $fasta $dir'/'$filename0 $dir'/'$filename1  > $dir'/'"${array[0]}".sam
       if [ -z "$keep" ]
       then
         rm $dir'/'$filename0 $dir'/'$filename1

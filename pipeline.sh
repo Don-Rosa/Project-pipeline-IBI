@@ -1,24 +1,30 @@
 #!/bin/bash
 # initialize a semaphore with a given number of tokens
 open_sem(){
-    mkfifo pipe-$$
-    exec 3<>pipe-$$
-    rm pipe-$$
+    mkfifo /tmp/pipe-$$
+    exec 3<>/tmp/pipe-$$ #$$ le process ID de ce shell
+    rm /tmp/pipe-$$
     local i=$1
     for((;i>0;i--)); do
-        printf %s 000 >&3
-    done
-}
-
+        printf %s 000 >&3  # & pour un file descriptor
+    done                   #  0 - stdin
+}                          #  1 - stdout
+                           #  2 - stderr
+                           #  3 ---> Sans signification spéciale
+                           
 # run the given command asynchronously and pop/push tokens
 run_with_lock(){
     local x
     # this read waits until there is something to read
-    read -u 3 -n 3 x && ((0==x)) || exit $x
+    read -u 3 -n 3 x && ((0==x)) || exit $x # Le || exit $x permet de propagé une erreur qui aurait été push par un sous-Shell
+    # && --> lance la commande ssi celle de gauche c'est bien exécuté
+    # || --> l'inverse, ssi celle de gauche n'a pas rendu 0
+
     (
-     ( "$@"; )
+     ( "$@"; ) # Dans notre cas, $@" est remplacé par en bash cleandata.sh $dir "$line" $fasta $keep
+               # La commande voulue est bien lancé en parallèle, cf le & à la fin
     # push the return code of the command to the semaphore
-    printf '%.3d' $? >&3
+    printf '%.3d' $? >&3  #($?) Le status de retour du dernier programme exectuée à l'avant plan
     )&
 }
 
@@ -112,5 +118,4 @@ then
     ((i++))
   done
 fi
-
 wait

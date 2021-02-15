@@ -11,7 +11,6 @@ do
   max=0
   total=0
   nb_lines=0
-  echo "$filename"
   for line_cov in $(cat $dir'/'"$filename"_cov)
   do
      IFS=$'\t' read -r -a cov <<< "$line_cov" #Gros gain de performance à ne pas utiliser cut et |
@@ -27,6 +26,5 @@ do
     fi
   done
   average=$(echo "$total / $nb_lines" | bc -l)
-  echo "$filename done"
   echo "Coverage of $filename : Average = $average  min $min max $max" >> "$dir"/Résultats/Cov.txt
 done
