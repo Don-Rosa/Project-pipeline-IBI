@@ -48,7 +48,6 @@ then
     then
       rm $dir'/'"${array[0]}".bam
     fi
-    bash flagstat.sh $dir "${array[0]}"
     bedtools genomecov -ibam $dir'/'"${array[0]}"_sorted.bam  -bga > $dir'/'"${array[0]}"_cov
     gatk MarkDuplicatesSpark -I $dir'/'"${array[0]}"_sorted.bam -O $dir'/'"${array[0]}"_gatk.bam -OBI
     gatk --java-options "-Xmx4g" HaplotypeCaller  -R $fasta -I $dir'/'"${array[0]}"_gatk.bam -O $dir'/'"${array[0]}".g.vcf.gz -ERC GVCF

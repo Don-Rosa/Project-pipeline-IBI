@@ -35,8 +35,6 @@ then
         then
           failed_md5=0
         fi
-
-        echo $failed_md5
         if [ "$failed_md5" == 1 ]
         then
           printf "  $filename Echec md5\n    md5_dl:  $md5 != \n    md5tsv:  ${md5_array[i]}\n" >> $dir"/dl_log.out"

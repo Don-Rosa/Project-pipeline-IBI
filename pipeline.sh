@@ -78,6 +78,7 @@ then
     if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
     then
       run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
+      bash flagstat.sh $dir "$line"
     fi
     ((i++))
   done
@@ -106,6 +107,7 @@ then
     then
       bash dl.sh $dir "$line"
       run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
+      bash flagstat.sh $dir "$line"
     fi
     ((i++))
   done

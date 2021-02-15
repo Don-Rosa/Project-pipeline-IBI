@@ -2,7 +2,8 @@
 #$2 nom du fichier
 
 dir=$1
-filename=$2
+tsv_line=$2
+filename=$(echo "$tsv_line" | cut -d$'\t' -f 1)
 outpoutdir=$dir"/Résultats"
 
 mkdir -p $outpoutdir
