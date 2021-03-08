@@ -13,9 +13,11 @@ do
   nb_lines=0
   for line_cov in $(cat $dir'/'"$filename"_cov)
   do
-     IFS=$'\t' read -r -a cov <<< "$line_cov" #Gros gain de performance à ne pas utiliser cut et |
-    ((nb_lines++))
-    ((total += "${cov[3]}"))
+    IFS=$'\t' read -r -a cov <<< "$line_cov" #Gros gain de performance à ne pas utiliser cut et |
+    ((size = "${cov[2]}" - "${cov[1]}"))
+    ((cov_pond = size*"${cov[3]}"))
+    ((nb_lines += $size))
+    ((total += $cov_pond))
     if (("${cov[3]}" > $max))
     then
       max="${cov[3]}"
