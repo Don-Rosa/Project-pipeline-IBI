@@ -5,14 +5,14 @@ bwa index ref.fa
 
 gatk CreateSequenceDictionary -R ref.fasta
 			--> crée un fasta.dict
-samtools faidx ref.fasta 
+samtools faidx ref.fasta
 			--> crée un fasta.fai
 
 
 
 
 bwa mem ${genome_ref}.fsa -R '@RG\tID:${Run Accession}\tPL:ILLUMINA\tPI:0\tSM:${Run Accession}\tLB:1'  ${read1}.fastq.gz ${read2 (Si il existe)}.fastq.gz  > ${out}.sam
-								--> Map des fastq au génome de reference 
+								--> Map des fastq au génome de reference
 								--> -R ajoute les read group, ID = ${Run Accession} sm = ${Run Accession}
 
 samtools view -H ${ficher}.sam | grep '^@RG'
@@ -33,11 +33,17 @@ samtools flagstat  ${ficher}.bam
 gatk MarkDuplicatesSpark -I ${input}.bam -O {output}.bam -OBI
 
 				--> marque les duplicats, pour ce que ça veut dire
-				
+
 bedtools genomecov -ibam ${fichier}.bam -bga > {output}
 			--> indique la couverture de chaque région génétique
 			--> le fichier bam doit être trié
 
 
 gatk --java-options "-Xmx4g" HaplotypeCaller  -R ${reference}.fsa -I ${input}.bam -O ${output}.g.vcf.gz -ERC GVCF
-				---> Fait un fichier GVCF, option ERC GVCF pour grouper dans un même bloc les variants			
+				---> Fait un fichier GVCF, option ERC GVCF pour grouper dans un même bloc les variants
+
+Exemple pour gatk GenotypeGVCFs
+gatk --java-options "-Xmx4g" GenotypeGVCFs
+-R S288C_reference_genome_R64-2-1_20150113/S288C_reference_sequence_R64-2-1_20150113_copie.fasta
+-V levure/ERR2299966.g.vcf.gz
+-O ERR2299966.vcf.gz
