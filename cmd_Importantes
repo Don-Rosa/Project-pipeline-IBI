@@ -48,11 +48,4 @@ gatk --java-options "-Xmx4g" GenotypeGVCFs
 -V levure/ERR2299966.g.vcf.gz
 -O ERR2299966.vcf.gz
 
-    gatk --java-options "-Xmx4g -Xms4g" \
-       GenomicsDBImport \
-       --genomicsdb-workspace-path my_database \
-       --batch-size 50 \
-       -L chr1:1000-10000 \
-       --sample-name-map cohort.sample_map \
-       --tmp-dir=/path/to/large/tmp \
-       --reader-threads 5
+    gatk --java-options "-Xmx4g" GenomicsDBImport --genomicsdb-workspace-path levure/ -L 20 --sample-name-map names.csv
