@@ -1,16 +1,17 @@
 #!/bin/bash
 
 dir=$1
-tsv=$2                 # On explicite les parametres
+tsv_line=$2                 # On explicite les parametres
 
-IFS=$'\n'
-for line in $(cat $tsv)
-do
-  filename=$(echo "$line" | cut -d$'\t' -f 1)
+
+filename=$(echo "$tsv_line" | cut -d$'\t' -f 1)
+if [ "$filename" != "sample_alias" ] && [ "$filename" != "" ] #On zappe la première ligne et les lignes vides
+then
   min=99999  #de la merde, à changer
   max=0
   total=0
   nb_lines=0
+  IFS=$'\n'
   for line_cov in $(cat $dir'/'"$filename"_cov)
   do
     IFS=$'\t' read -r -a cov <<< "$line_cov" #Gros gain de performance à ne pas utiliser cut et |
@@ -29,4 +30,4 @@ do
   done
   average=$(echo "$total / $nb_lines" | bc -l)
   echo "Coverage of $filename : Average = $average  min $min max $max" >> "$dir"/Résultats/Cov.txt
-done
+fi

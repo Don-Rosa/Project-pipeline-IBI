@@ -1,14 +1,8 @@
 #!/bin/bash
 # utilisation ./dl.sh $1 $2
 # $1 le dossier où seront télechargé les fichers
-# $2 une ligne d'un ficher TSV formaté de la sorte: run_accession \t study_alias \t fastq_md5 \t fastq
+# $2 une ligne d'un ficher TSV formaté de la sorte: SampleTitle \t fastq_md5 \t fastq
 # fastq et md5 peuvent contenir plusieurs liens séparé par des ;
-
-#IFS=$'\n'
-#mkdir -p $dir
-#printf "\nTéléchargement des fastq.gz de: $2\n\n" >> $dir"/dl_log.out"
-#for line in $(cat $2)
-#do
 
 dir=$1
 tsvLine=$2                 # On explicite les parametres
@@ -51,5 +45,3 @@ then
       fi
     done
   fi
-
-#done

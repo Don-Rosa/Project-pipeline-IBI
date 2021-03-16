@@ -1,14 +1,10 @@
 #!/bin/bash
 # utilisation ./cleandata.sh $1 $2 $3 $4
 # $1 le dossier où sont les fichers
-# $2 une ligne d'un ficher TSV formaté de la sorte: run_accession \t study_alias \t fastq_md5 \t fastq
+# $2 une ligne d'un ficher TSV formaté de la sorte: SampleTitle \t fastq_md5 \t fastq
 # $3 le chemin vers le genome de reference, au format FASTA et pas fsa
 # $4 --> Si il n'est pas null on garde les fichers intermediaires
 # fastq et md5 peuvent contenir plusieurs liens séparé par des;
-
-#IFS=$'\n'
-#for line in $(cat $2)
-#do
 
 dir=$1
 tsvLine=$2                 # On explicite les parametres
@@ -52,5 +48,3 @@ then
     gatk MarkDuplicatesSpark -I $dir'/'"${array[0]}"_sorted.bam -O $dir'/'"${array[0]}"_gatk.bam -OBI
     gatk --java-options "-Xmx4g" HaplotypeCaller  -R $fasta -I $dir'/'"${array[0]}"_gatk.bam -O $dir'/'"${array[0]}".g.vcf.gz -ERC GVCF
 fi
-
-#done

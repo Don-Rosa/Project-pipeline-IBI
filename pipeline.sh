@@ -11,7 +11,7 @@ open_sem(){
 }                          #  1 - stdout
                            #  2 - stderr
                            #  3 ---> Sans signification spéciale
-                           
+
 # run the given command asynchronously and pop/push tokens
 run_with_lock(){
     local x
@@ -28,6 +28,20 @@ run_with_lock(){
     )&
 }
 
+function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquentiellement
+  j=0                       # (Pour ne pas les avoir dans un ordre aléatoire)
+  mkdir -p $dir"/Résultats" # -p enlève le warning si le dossier existe déja
+  IFS=$'\n'
+  for line in $(cat $tsv)
+  do
+    if (( "$j" >= "$begin" )) && ( [ -z "$end" ] || (( "$j" <= "$end" )) )
+    then
+      bash flagstat.sh "$dir" "$line"
+      bash cov.sh "$dir" "$line"
+    fi
+    ((j++))
+  done
+}
 
 usage()
 {
@@ -75,22 +89,22 @@ bwa index $fasta
 gatk CreateSequenceDictionary -R $fasta
 samtools faidx $fasta
 
+IFS=$'\n'
 if [ -z "$dl_opt" ]
 then
-  open_sem $maxN
-  IFS=$'\n'
+  open_sem $max
   for line in $(cat $tsv)
   do
-    if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
-    then
-      run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
-      bash flagstat.sh $dir "$line"
-    fi
+    #if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
+    #then
+      #run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
+    #fi
     ((i++))
   done
+  wait          #On attend la fin de tout les opérations parrallèles
+  boucle_seq    #Pour lancer un traitement sequentiel des données
 elif [ $dl_opt == "dl_files_only" ]
 then
-  IFS=$'\n'
   mkdir -p $dir
   printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> $dir"/dl_log.out"
   for line in $(cat $tsv)
@@ -104,7 +118,6 @@ then
 elif [ $dl_opt == "fast_forward" ]
 then
   open_sem $maxN
-  IFS=$'\n'
   mkdir -p $dir
   printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> $dir"/dl_log.out"
   for line in $(cat $tsv)
@@ -113,9 +126,9 @@ then
     then
       bash dl.sh $dir "$line"
       run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
-      bash flagstat.sh $dir "$line"
     fi
     ((i++))
   done
+  wait          #On attend la fin de tout les opérations parrallèles
+  boucle_seq    #Pour lancer un traitement sequentiel des données
 fi
-wait
