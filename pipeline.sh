@@ -41,6 +41,7 @@ function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquent
     fi
     ((j++))
   done
+  bash Database.sh "$dir" "$tsv"
 }
 
 usage()
