@@ -48,4 +48,7 @@ gatk --java-options "-Xmx4g" GenotypeGVCFs
 -V levure/ERR2299966.g.vcf.gz
 -O ERR2299966.vcf.gz
 
-    gatk --java-options "-Xmx4g" GenomicsDBImport --genomicsdb-workspace-path levure/ -L 20 --sample-name-map names.csv
+    gatk --java-options "-Xmx4g" GenomicsDBImport --genomicsdb-workspace-path "Destination/" -L 20 --sample-name-map names.csv
+
+cut -f 1 sampleTitle_md5_fastq.tsv : Récup la première colonne du fichier md5
+tail -n +2  "file" pour récup tout sauf la première ligne
