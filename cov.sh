@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dir=$1
-tsv_line=$2                 # On explicite les parametres
+dir="$1"
+tsv_line="$2"                 # On explicite les parametres
 
 
 filename=$(echo "$tsv_line" | cut -d$'\t' -f 1)
@@ -12,7 +12,7 @@ then
   total=0
   nb_lines=0
   IFS=$'\n'
-  for line_cov in $(cat $dir'/'"$filename"_cov)
+  for line_cov in $(cat "$dir"/"$filename"_cov)
   do
     IFS=$'\t' read -r -a cov <<< "$line_cov" #Gros gain de performance à ne pas utiliser cut et |
     ((size = "${cov[2]}" - "${cov[1]}"))

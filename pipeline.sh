@@ -30,11 +30,11 @@ run_with_lock(){
 
 function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquentiellement
   j=0                       # (Pour ne pas les avoir dans un ordre aléatoire)
-  mkdir -p $dir"/Résultats" # -p enlève le warning si le dossier existe déja
+  mkdir -p "$dir/Résultats" # -p enlève le warning si le dossier existe déja
   IFS=$'\n'
-  for line in $(cat $tsv)
+  for line in $(cat "$tsv")
   do
-    if (( "$j" >= "$begin" )) && ( [ -z "$end" ] || (( "$j" <= "$end" )) )
+    if (( $j >= $begin )) && ( [ -z $end ] || (( $j <= $end )) )
     then
       bash flagstat.sh "$dir" "$line"
       bash cov.sh "$dir" "$line"
@@ -42,6 +42,7 @@ function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquent
     ((j++))
   done
   bash Database.sh "$dir" "$tsv"
+  gatk --java-options "-Xmx4g" GenotypeGVCFs -R "$fasta" -V gendb://"$dir/Database" -O "$dir/levure.vcf.gz"
 }
 
 usage()
@@ -60,6 +61,7 @@ begin=0
 i=0
 unset end # end unset --> pas de limite supérieure
 unset keep
+
 while getopts p:dfb:e:k option
 do
     case $option in
@@ -82,51 +84,51 @@ do
 done
 shift $((OPTIND-1))    # On retire les options
 
-dir=$1
-tsv=$2                 # On explicite les parametres
-fasta=$3
+dir="$1"
+tsv="$2"                 # On explicite les parametres
+fasta="$3"
 
-bwa index $fasta
-gatk CreateSequenceDictionary -R $fasta
-samtools faidx $fasta
+bwa index "$fasta"
+gatk CreateSequenceDictionary -R "$fasta"
+samtools faidx "$fasta"
 
 IFS=$'\n'
 if [ -z "$dl_opt" ]
 then
   open_sem $max
-  for line in $(cat $tsv)
+  for line in $(cat "$tsv")
   do
-    #if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
-    #then
-      #run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
-    #fi
+    if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
+    then
+      run_with_lock bash cleandata.sh "$dir" "$line" "$fasta" $keep
+    fi
     ((i++))
   done
   wait          #On attend la fin de tout les opérations parrallèles
   boucle_seq    #Pour lancer un traitement sequentiel des données
-elif [ $dl_opt == "dl_files_only" ]
+elif [ "$dl_opt" == "dl_files_only" ]
 then
-  mkdir -p $dir
-  printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> $dir"/dl_log.out"
-  for line in $(cat $tsv)
+  mkdir -p "$dir"
+  printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> "$dir/dl_log.out"
+  for line in $(cat "$tsv")
   do
-    if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
+    if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
     then
-      bash dl.sh $dir "$line"
+      bash dl.sh "$dir" "$line"
     fi
     ((i++))
   done
-elif [ $dl_opt == "fast_forward" ]
+elif [ "$dl_opt" == "fast_forward" ]
 then
   open_sem $maxN
-  mkdir -p $dir
-  printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> $dir"/dl_log.out"
-  for line in $(cat $tsv)
+  mkdir -p "$dir"
+  printf "\nTéléchargement des fastq.gz de: $tsv\n\n" >> "$dir/dl_log.out"
+  for line in $(cat "$tsv")
   do
-    if (( "$i" >= "$begin" )) && ( [ -z "$end" ] || (( "$i" <= "$end" )) )
+    if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
     then
-      bash dl.sh $dir "$line"
-      run_with_lock bash cleandata.sh $dir "$line" $fasta $keep
+      bash dl.sh "$dir" "$line"
+      run_with_lock bash cleandata.sh $dir "$line" "$fasta" $keep
     fi
     ((i++))
   done
