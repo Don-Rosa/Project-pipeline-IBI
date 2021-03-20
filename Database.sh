@@ -6,10 +6,11 @@ tsv=$2
 outpoutdir=$dir"/Database"
 names="names.txt"
 
+rm -f $names
 declare -i nbligne=0
 
 
-cut -f 1 sampleTitle_md5_fastq.tsv > 1.temp
+cut -f 1 $tsv > 1.temp
 tail -n +2  1.temp > 1b.temp
 wc -l 1b.temp > lines.temp
 nbligne=$(cut -c1-2 lines.temp)

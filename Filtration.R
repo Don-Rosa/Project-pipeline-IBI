@@ -1,6 +1,7 @@
 #R script pour faire des distributions
 #!/usr/bin/env Rscript
 library(lattice)
+library(VennDiagram) # pour les diagrammes de venn
 
 # LECTURE DU FICHIER
 annot.file = "myfile"
@@ -18,7 +19,7 @@ lim.SOR = 3.0
 pdf(paste(annot.file,"Filtres.pdf",sep="_"))
 ## FIGURE DE QD
   prop.QD=length( which(annotations$QD >lim.QD)) / nrow(annotations)
-  plot(density(annotations$QD,na.rm=T),main="QD", sub = paste("Filtre: QD >",lim.QD,"( = ", signif(prop.QD,3),"% des SNP) " ,sep="") ) 
+  plot(density(annotations$QD,na.rm=T),main="QD", sub = paste("Filtre: QD >",lim.QD,"( = ", signif(prop.QD,3),"% des SNP) " ,sep="") )
   abline(v=lim.QD, col="red")
 
 dev.off()
@@ -38,5 +39,3 @@ venn.diagram(
   output=TRUE,
   filename = "MondiagrammedeVenn"
   )
-
-
