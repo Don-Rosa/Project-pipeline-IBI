@@ -4,7 +4,8 @@ library(lattice)
 library(VennDiagram) # pour les diagrammes de venn
 
 # LECTURE DU FICHIER
-annot.file = "myfile"
+args = commandArgs(trailingOnly=TRUE)
+annot.file = args[1]
 annotations = read.table(annot.file, h=TRUE,na.strings=".")
 
 # INITIALISATION DES SEUILS
@@ -14,6 +15,8 @@ lim.MQ = 50
 lim.MQRankSum = -2.5
 lim.ReadPosRankSum = -8.0
 lim.SOR = 3.0
+
+
 
 # CREATION DES FIGURES
 pdf(paste(annot.file,"Filtres.pdf",sep="_"))
