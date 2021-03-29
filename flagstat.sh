@@ -1,3 +1,4 @@
+#!/bin/bash
 #$1 chemin du fichier à analyser
 #$2 nom du fichier
 

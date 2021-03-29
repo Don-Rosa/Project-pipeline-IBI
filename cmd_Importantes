@@ -54,3 +54,8 @@ cut -f 1 sampleTitle_md5_fastq.tsv : Récup la première colonne du fichier md5
 tail -n +2  "file" pour récup tout sauf la première ligne
 
 gatk --java-options "-Xmx4g" GenotypeGVCFs -R "$fasta" -V gendb://"$dir/Database" -O "$dir/.vcf.gz"
+
+Rscript Filtration.R "fichier"
+
+egrep -v "^##" levure.vcf > levure_no_header.vcf
+bcftools view --no-header levure.vcf > test_no_header.vcf
