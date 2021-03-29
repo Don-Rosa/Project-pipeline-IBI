@@ -14,13 +14,25 @@ do
   if  [[ "${vcf_l[0]}"  != \#* ]] #On ne compte par les lignes commentées
   then
     ref="${vcf_l[3]}"
-    alt="${vcf_l[4]}"                 # Comparaisons numérique
-    if [[ "${#ref}" -eq "${#alt}" ]]; # -eq # equal
-    then                              # -ne # not equal
-      ((snp++))                       # -lt # less than
-    else                              # -le # less than or equal
-      ((indel++))                     # -gt # greater than
-    fi                                # -ge # greater than or equal
+    alt="${vcf_l[4]}"   # alt est une liste d'allèle possibles séparées par ','
+
+    IFS=$',' read -r -a alleles <<< "$alt"
+    snp=0
+    i=0
+    max="${#alleles[@]}"
+    test="${alleles[0]}"
+    while [[ "$i" -lt "$max" ]] && [[ "${#ref}" -eq "${#test}" ]] # Comparaisons numérique
+    do                                                              # -eq # equal
+      ((i++))
+      test="${alleles[i]}"                                                       # -ne # not equal
+    done                                                            # -lt # less than
+                                                                    # -le # less than or equal
+    if [[ "$i" -eq "$max" ]]; #Tous de la même taille                    # -gt # greater than
+    then                                                            # -ge # greater than or equal
+      ((snp++))
+    else
+      ((indel++))
+    fi
   fi
 done
 

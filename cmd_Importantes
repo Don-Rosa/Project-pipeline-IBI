@@ -59,3 +59,9 @@ Rscript Filtration.R "fichier"
 
 egrep -v "^##" levure.vcf > levure_no_header.vcf
 bcftools view --no-header levure.vcf > test_no_header.vcf
+
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QD\t%FS\t%MQ\t%MQRankSum\t%ReadPosRankSum\t%SOR\t%DP\n' levure/levure_snp.vcf.gz > levure/levure_snp_filtres.txt
+
+
+gatk SelectVariants -R $reference.fasta -V ${file}_indels_raw.vcf.gz --select-type-to-include SNP -O ${file}_raw.vcf.gz
+gatk CountVariants -V levure/levure.vcf.gz

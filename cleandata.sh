@@ -45,6 +45,6 @@ then
       rm "$dir"/"${array[0]}".bam
     fi
     bedtools genomecov -ibam "$dir"/"${array[0]}"_sorted.bam  -bga > "$dir"/"${array[0]}"_cov
-    gatk MarkDuplicatesSpark -I "$dir"/"${array[0]}"_sorted.bam -O "$dir"/"${array[0]}"_gatk.bam -OBI
+    gatk MarkDuplicatesSpark -I "$dir"/"${array[0]}"_sorted.bam -O "$dir"/"${array[0]}"_gatk.bam -OBI  #Necessite une connexion internet car calcul distribué
     gatk --java-options "-Xmx4g" HaplotypeCaller  -R "$fasta" -I "$dir"/"${array[0]}"_gatk.bam -O "$dir"/"${array[0]}".g.vcf.gz -ERC GVCF
 fi
