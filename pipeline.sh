@@ -34,18 +34,19 @@ function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquent
   IFS=$'\n'
   for line in $(cat "$tsv")
   do
-    #if (( $j >= $begin )) && ( [ -z $end ] || (( $j <= $end )) )
-    #then
-    #  bash flagstat.sh "$dir" "$line"
-    #  bash cov.sh "$dir" "$line"
-    #fi
+    if (( $j >= $begin )) && ( [ -z $end ] || (( $j <= $end )) )
+    then
+      bash flagstat.sh "$dir" "$line"
+      bash cov.sh "$dir" "$line"
+    fi
     ((j++))
   done
-  #bash Database.sh "$dir" "$tsv"
-  #gatk --java-options "-Xmx4g" GenotypeGVCFs -R "$fasta" -V gendb://"$dir/Database" -O "$dir/levure.vcf.gz"
+  bash Database.sh "$dir" "$tsv"
+  gatk --java-options "-Xmx4g" GenotypeGVCFs -R "$fasta" -V gendb://"$dir/Database" -O "$dir/levure.vcf.gz"
 
   gatk SelectVariants -R $fasta -V "$dir/levure.vcf.gz" --select-type-to-include SNP -O "$dir/levure_snp.vcf.gz"
-  
+
+  rm -f "$dir/Résultats/snp_indel.txt"
   total=$(gatk CountVariants -V "$dir/levure.vcf.gz"   | cut -d' ' -f 3)
   snp=$(gatk CountVariants -V "$dir/levure_snp.vcf.gz" | cut -d' ' -f 3)
   total=$(echo $total)
@@ -54,8 +55,9 @@ function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquent
   ((indel=total-snp))
   indelr=$(echo "$indel*100 / $total" | bc -l)
   snpr=$(echo "$snp*100 / $total" | bc -l)
-
   echo "SNP/INDEL of levure.vcf.gz : SNP = $snp  INDEL = $indel Total = $total SNP/INDEL = $snpr% / $indelr%" > "$dir"/Résultats/snp_indel.txt
+  bash INDEL_SNP.sh $dir "levure.vcf.gz"   #Pour la gloire
+
   rm -f "$dir/levure_snp_filtres.txt"
   echo -e "CHROM\tPOS\tREF\tALT\tQD\tFS\tMQ\tMQRankSum\tReadPosRankSum\tSOR\tDP" >> "$dir/levure_snp_filtres.txt"  # Du sale
   bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QD\t%FS\t%MQ\t%MQRankSum\t%ReadPosRankSum\t%SOR\t%DP\n' "$dir/levure_snp.vcf.gz" >> "$dir/levure_snp_filtres.txt"
@@ -105,9 +107,9 @@ dir="$1"
 tsv="$2"                 # On explicite les parametres
 fasta="$3"
 
-#bwa index "$fasta"
-#gatk CreateSequenceDictionary -R "$fasta"
-#samtools faidx "$fasta"
+bwa index "$fasta"
+gatk CreateSequenceDictionary -R "$fasta"
+samtools faidx "$fasta"
 
 IFS=$'\n'
 if [ -z "$dl_opt" ]
@@ -115,10 +117,10 @@ then
   open_sem $maxN
   for line in $(cat "$tsv")
   do
-    #if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
-    #then
-      #run_with_lock bash cleandata.sh "$dir" "$line" "$fasta" $keep
-    #fi
+    if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
+    then
+      run_with_lock bash cleandata.sh "$dir" "$line" "$fasta" $keep
+    fi
     ((i++))
   done
   wait          #On attend la fin de tout les opérations parrallèles
