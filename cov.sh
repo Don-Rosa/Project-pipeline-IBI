@@ -2,7 +2,7 @@
 
 dir="$1"
 tsv_line="$2"                 # On explicite les parametres
-
+keep="$3"
 
 filename=$(echo "$tsv_line" | cut -d$'\t' -f 1)
 if [ "$filename" != "sample_alias" ] && [ "$filename" != "" ] #On zappe la première ligne et les lignes vides
@@ -30,4 +30,8 @@ then
   done
   average=$(echo "$total / $nb_lines" | bc -l)
   echo "Coverage of $filename : Average = $average  min $min max $max" >> "$dir"/Résultats/Cov.txt
+  if [ -z "$keep" ]
+  then
+    rm "$dir"/"$filename"_cov
+  fi
 fi

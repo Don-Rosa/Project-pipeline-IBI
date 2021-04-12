@@ -14,7 +14,7 @@ annotations = read.table(annot.file, h=TRUE,na.strings=".")
 # head(annotations) 
 
 # INITIALISATION DES SEUILS Version Conservative
-lim.QDc = 21
+lim.QDc = 11
 lim.FSc = 5
 lim.MQc = 58
 lim.MQRankSumc = -0.5
@@ -22,7 +22,7 @@ lim.ReadPosRankSumc = -0.5
 lim.SORc = 1.3
 
 # INITIALISATION DES SEUILS Version Exhaustive
-lim.QDe = 6
+lim.QDe = 5
 lim.FSe = 15
 lim.MQe = 54
 lim.MQRankSume = -2.5

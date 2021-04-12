@@ -1,7 +1,7 @@
 #!/bin/bash
 # utilisation ./cleandata.sh $1 $2 $3 $4
 # $1 le dossier où sont les fichers
-# $2 une ligne d'un ficher TSV formaté de la sorte: SampleAlias \t fastq_md5 \t fastq
+# $2 une ligne d'un ficher TSV formaté de la sorte: SampleAlias \t fastq_md5 \t fastq \t studyAccession
 # $3 le chemin vers le genome de reference, au format FASTA et pas fsa
 # $4 --> Si il n'est pas null on garde les fichers intermediaires
 # fastq et md5 peuvent contenir plusieurs liens séparé par des;

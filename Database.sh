@@ -4,7 +4,7 @@
 dir="$1"
 tsv="$2"
 outpoutdir="$dir/Database"
-names="names.txt"
+names="$dir/names.txt"
 
 rm -f "$names"
 declare -i nbligne=0

@@ -1,7 +1,7 @@
 #!/bin/bash
 # utilisation ./dl.sh $1 $2
 # $1 le dossier où seront télechargé les fichers
-# $2 une ligne d'un ficher TSV formaté de la sorte: SampleTitle \t fastq_md5 \t fastq
+# $2 une ligne d'un ficher TSV formaté de la sorte: SampleAlias \t fastq_md5 \t fastq \t studyAccession
 # fastq et md5 peuvent contenir plusieurs liens séparé par des ;
 
 dir="$1"
