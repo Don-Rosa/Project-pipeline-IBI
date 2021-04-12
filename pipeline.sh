@@ -32,36 +32,52 @@ function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquent
   j=0                       # (Pour ne pas les avoir dans un ordre aléatoire)
   mkdir -p "$dir/Résultats" # -p enlève le warning si le dossier existe déja
   IFS=$'\n'
-  for line in $(cat "$tsv")
-  do
-    if (( $j >= $begin )) && ( [ -z $end ] || (( $j <= $end )) )
-    then
-      bash flagstat.sh "$dir" "$line"
-      bash cov.sh "$dir" "$line"
-    fi
-    ((j++))
-  done
-  bash Database.sh "$dir" "$tsv"
-  gatk --java-options "-Xmx4g" GenotypeGVCFs -R "$fasta" -V gendb://"$dir/Database" -O "$dir/levure.vcf.gz"
+  #for line in $(cat "$tsv")
+  #do
+  #  if (( $j >= $begin )) && ( [ -z $end ] || (( $j <= $end )) )
+  #  then
+  #    bash flagstat.sh "$dir" "$line"
+  #    bash cov.sh "$dir" "$line"
+  #  fi
+  #  ((j++))
+  #done
+  #bash Database.sh "$dir" "$tsv"
+  #gatk --java-options "-Xmx4g" GenotypeGVCFs -R "$fasta" -V gendb://"$dir/Database" -O "$dir/levure.vcf.gz"
 
-  gatk SelectVariants -R $fasta -V "$dir/levure.vcf.gz" --select-type-to-include SNP -O "$dir/levure_snp.vcf.gz"
+  #gatk SelectVariants -R $fasta -V "$dir/levure.vcf.gz" --select-type-to-include SNP -O "$dir/levure_snp.vcf.gz"
 
-  rm -f "$dir/Résultats/snp_indel.txt"
-  total=$(gatk CountVariants -V "$dir/levure.vcf.gz"   | cut -d' ' -f 3)
-  snp=$(gatk CountVariants -V "$dir/levure_snp.vcf.gz" | cut -d' ' -f 3)
-  total=$(echo $total)
-  snp=$(echo $snp) #Truc bizarre avec les fins de ligne
+  #rm -f "$dir/Résultats/snp_indel.txt"
+  #total=$(gatk CountVariants -V "$dir/levure.vcf.gz"   | cut -d' ' -f 3)
+  #snp=$(gatk CountVariants -V "$dir/levure_snp.vcf.gz" | cut -d' ' -f 3)
+  #total=$(echo $total)
+  #snp=$(echo $snp) #Truc bizarre avec les fins de ligne
 
-  ((indel=total-snp))
-  indelr=$(echo "$indel*100 / $total" | bc -l)
-  snpr=$(echo "$snp*100 / $total" | bc -l)
-  echo "SNP/INDEL of levure.vcf.gz : SNP = $snp  INDEL = $indel Total = $total SNP/INDEL = $snpr% / $indelr%" > "$dir"/Résultats/snp_indel.txt
-  bash INDEL_SNP.sh $dir "levure.vcf.gz"   #Pour la gloire
+  #((indel=total-snp))
+  #indelr=$(echo "$indel*100 / $total" | bc -l)
+  #snpr=$(echo "$snp*100 / $total" | bc -l)
+  #echo "SNP/INDEL of levure.vcf.gz : SNP = $snp  INDEL = $indel Total = $total SNP/INDEL = $snpr% / $indelr%" > "$dir"/Résultats/snp_indel.txt
+  #bash INDEL_SNP.sh $dir "levure.vcf.gz"   #Pour la gloire
 
-  rm -f "$dir/levure_snp_filtres.txt"
-  echo -e "CHROM\tPOS\tREF\tALT\tQD\tFS\tMQ\tMQRankSum\tReadPosRankSum\tSOR\tDP" >> "$dir/levure_snp_filtres.txt"  # Du sale
-  bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QD\t%FS\t%MQ\t%MQRankSum\t%ReadPosRankSum\t%SOR\t%DP\n' "$dir/levure_snp.vcf.gz" >> "$dir/levure_snp_filtres.txt"
-  Rscript Filtration.R "$dir/levure_snp_filtres.txt"
+  rm -f "$dir/levure_snp_filtres"
+  echo -e "CHROM\tPOS\tREF\tALT\tQD\tFS\tMQ\tMQRankSum\tReadPosRankSum\tSOR\tDP" >> "$dir/levure_snp_filtres"  # Pour avoir le nom des colonnes
+  bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QD\t%FS\t%MQ\t%MQRankSum\t%ReadPosRankSum\t%SOR\t%DP\n' "$dir/levure_snp.vcf.gz" >> "$dir/levure_snp_filtres"
+  Rscript Filtration.R "$dir" "levure_snp_filtres"
+
+  gatk VariantFiltration -R $fasta -V "$dir/levure_snp.vcf.gz" -O "$dir/levure_snp_cons.vcf.gz" -filter "QD < 21.0 || FS > 5.0 || MQ < 58.0 || SOR > 1.3 || MQRankSum < -0.5 || MQRankSum > 0.5 || ReadPosRankSum < -0.5 || ReadPosRankSum > 0.5" --filter-name "6filtres"
+  gatk VariantFiltration -R $fasta -V "$dir/levure_snp.vcf.gz" -O "$dir/levure_snp_cons_missing.vcf.gz" -filter "QD < 21.0 || FS > 5.0 || MQ < 58.0 || SOR > 1.3 || MQRankSum < -0.5 || MQRankSum > 0.5 || ReadPosRankSum < -0.5 || ReadPosRankSum > 0.5" --filter-name "6filtres" --missing-values-evaluate-as-failing true
+  vcftools --gzvcf "$dir/levure_snp_cons.vcf.gz" --remove-filtered-all --recode --stdout | gzip -c > "$dir/levure_snp_cons_PASS.vcf.gz"
+  vcftools --gzvcf "$dir/levure_snp_cons_missing.vcf.gz" --remove-filtered-all --recode --stdout | gzip -c > "$dir/levure_snp_cons_missing_PASS.vcf.gz"
+
+  gatk VariantFiltration -R $fasta -V "$dir/levure_snp.vcf.gz" -O "$dir/levure_snp_exhau.vcf.gz" -filter "QD < 6.0 || FS > 15.0 || MQ < 54.0 || SOR > 2.5 || MQRankSum < -2.5 || MQRankSum > 2.5 || ReadPosRankSum < -1.3 || ReadPosRankSum > 1.3" --filter-name "6filtres"
+  gatk VariantFiltration -R $fasta -V "$dir/levure_snp.vcf.gz" -O "$dir/levure_snp_exhau_missing.vcf.gz" -filter "QD < 6.0 || FS > 15.0 || MQ < 54.0 || SOR > 2.5 || MQRankSum < -2.5 || MQRankSum > 2.5 || ReadPosRankSum < -1.3 || ReadPosRankSum > 1.3" --filter-name "6filtres" --missing-values-evaluate-as-failing true
+  vcftools --gzvcf "$dir/levure_snp_exhau.vcf.gz" --remove-filtered-all --recode --stdout | gzip -c > "$dir/levure_snp_exhau_PASS.vcf.gz"
+  vcftools --gzvcf "$dir/levure_snp_exhau_missing.vcf.gz" --remove-filtered-all --recode --stdout | gzip -c > "$dir/levure_snp_exhau_missing_PASS.vcf.gz"
+
+  Rscript Arbre.R "$dir" "levure_snp_cons_PASS"
+  Rscript Arbre.R "$dir" "levure_snp_cons_missing_PASS"
+  Rscript Arbre.R "$dir" "levure_snp_exhau_PASS"
+  Rscript Arbre.R "$dir" "levure_snp_exhau_missing_PASS"
+
 }
 
 usage()
@@ -107,22 +123,22 @@ dir="$1"
 tsv="$2"                 # On explicite les parametres
 fasta="$3"
 
-bwa index "$fasta"
-gatk CreateSequenceDictionary -R "$fasta"
-samtools faidx "$fasta"
+#bwa index "$fasta"
+#gatk CreateSequenceDictionary -R "$fasta"
+#samtools faidx "$fasta"
 
 IFS=$'\n'
 if [ -z "$dl_opt" ]
 then
-  open_sem $maxN
-  for line in $(cat "$tsv")
-  do
-    if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
-    then
-      run_with_lock bash cleandata.sh "$dir" "$line" "$fasta" $keep
-    fi
-    ((i++))
-  done
+  #open_sem $maxN
+  #for line in $(cat "$tsv")
+  #do
+    #if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
+    #then
+    #  run_with_lock bash cleandata.sh "$dir" "$line" "$fasta" $keep
+    #fi
+    #((i++))
+  #done
   wait          #On attend la fin de tout les opérations parrallèles
   boucle_seq    #Pour lancer un traitement sequentiel des données
 elif [ "$dl_opt" == "dl_files_only" ]

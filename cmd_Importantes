@@ -65,3 +65,19 @@ bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QD\t%FS\t%MQ\t%MQRankSum\t%ReadPos
 
 gatk SelectVariants -R $reference.fasta -V ${file}_indels_raw.vcf.gz --select-type-to-include SNP -O ${file}_raw.vcf.gz
 gatk CountVariants -V levure/levure.vcf.gz
+
+
+lim.QD = 21
+lim.FS = 5
+lim.MQ = 58
+lim.MQRankSum = -0.5
+lim.ReadPosRankSum = -0.5
+lim.SOR = 1.3
+
+gatk VariantFiltration -R S288C_reference_genome_R64-2-1_20150113/S288C_reference_sequence_R64-2-1_20150113_copie.fasta -V levure/levure_snp.vcf.gz -O levure/levure_snp_filtered.vcf.gz -filter "QD < 21.0 || FS > 5.0 || MQ < 58.0 || SOR > 1.3 || MQRankSum < -0.5 || MQRankSum > 0.5 || ReadPosRankSum < -0.5 || ReadPosRankSum > 0.5" --filter-name "6filtres"
+
+
+ca donne un fichier VCF avec la colonne FILTER remplie
+et ensuite vous pouveez selectonner les SNP qui passent les filtres :
+
+vcftools --gzvcf ${file}.vcf.gz --remove-filtered-all --recode --stdout | gzip -c > ${file}_PASS.vcf.gz
