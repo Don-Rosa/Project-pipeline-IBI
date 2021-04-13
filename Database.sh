@@ -7,18 +7,14 @@ outpoutdir="$dir/Database"
 names="$dir/names.txt"
 
 rm -f "$names"
-declare -i nbligne=0
 
-
-cut -f 1 "$tsv" > 1.temp
-tail -n +2  1.temp > 1b.temp
-wc -l 1b.temp > lines.temp
-nbligne=$(cut -c1-2 lines.temp)
-write=$(basename "$dir")
-for (( var=0; var<$nbligne; var++ )); do echo "$write" >> 1c.temp; done
-for (( var=0; var<$nbligne; var++ )); do echo g.vcf.gz >> 1e.temp; done
-paste 1b.temp 1c.temp > 1d.temp
-paste 1d.temp 1b.temp -d"/" > 2.temp
-paste 2.temp 1e.temp -d"." > "$names"
-rm -f *.temp
+IFS=$'\n'
+for line in $(cat "$tsv")
+do
+  IFS=$'\t' read -r -a array <<< "$line"    # Divise ligne en un tableau,le séparateur est \t, la tabulation
+  if [ "${array[2]}" != "fastq_ftp" ] && [ "${array[2]}" != "" ]  # On zappe la première ligne et les lignes vides
+  then
+    echo  -e "${array[0]}\t$dir/${array[0]}.g.vcf.gz" >> $names
+  fi
+done
 gatk --java-options "-Xmx4g" GenomicsDBImport --genomicsdb-workspace-path "$outpoutdir" -L interval.list --sample-name-map "$names"

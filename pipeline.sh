@@ -83,7 +83,7 @@ usage()
 {
     echo "usage: <command> options args:
     <p:Nombre max de shells en parallèle>
-    <d>(Télécharge juste les fichiers)
+    <d>(Télécharge les fichiers)
     <f> (Télécharge et fast forward le nettoyage)
     <b:x> <e:y> (télécharge et/ou traite les fichers entre les lignes x et y)
     <m:x> Choisit le mode de filtration --> x=cons: Concervative(défaut), x=exhau: Exhaustive, x=both: Les deux
@@ -128,8 +128,8 @@ shift $((OPTIND-1))    # On retire les options
 dir="$1"
 tsv="$2"                 # On explicite les parametres
 fasta="$3"
-
-if [ -z "$fasta" ] || [ -z "$tsv" ] || [ -z "$dir" ] #Verification que les 3 arguments obligatoires sont fournis
+#Verification que les 3 arguments obligatoires sont fournis
+if [ -z "$fasta" ] || [ -z "$tsv" ] || [ -z "$dir" ]
 then
   usage
   exit
@@ -142,6 +142,15 @@ samtools faidx "$fasta"
 IFS=$'\n'
 if [ -z "$dl_opt" ]
 then
+  for line in $(cat "$tsv")
+  do
+    if (( $i >= $begin )) && ( [ -z $end ] || (( $i <= $end )) )
+    then
+      bash dl.sh "$dir" "$line"
+    fi
+    ((i++))
+  done
+  i=0
   open_sem $maxN
   for line in $(cat "$tsv")
   do
