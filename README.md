@@ -1,7 +1,7 @@
 #  Project-pipeline-IBI  
 
 ##  Prérequis :  
-1. Ces programmes à jour/compilé et  **dans  le  PATH**  
+1. Ces programmes à jour/compilés et  **dans  le  PATH**  
 *  bwa  
 *  bedtools  
 *  picard  
@@ -12,11 +12,11 @@
 *  R  (Avec ces extensions installées : "VennDiagram" , "BiocManager" , "SNPRelate" , "ape" , "RColorBrewer")  
 2. Une version du génome de référence au format  **.fasta**  des échantillons séquencés  
 3. Un ficher  **.tsv**  formaté de la sorte : SampleAlias  \t  fastq_md5  \t  fastq  \t  studyAccession  
-4. Une connexion internet pour  télécharger  les  fastq  et certaines  fonction  de  gatk  distribuées  
+4. Une connexion internet pour  télécharger  les  fastq  et certaines  fonctions  de  gatk  distribuées  
 
 ##  Utilisation  
 
-Tout ce fait via le script  **pipeline.sh**  et ses 3 arguments obligatoires  
+Tout se fait via le script  **pipeline.sh**  et ses 3 arguments obligatoires  
 Usage : pipeline.sh  options  $1 $2 $3  
 
 arg1  -->  Dossier de destination/travail  
@@ -30,7 +30,7 @@ arg3  -->  Génome de référence au format  FASTA
    *  **-f**  |  Télécharge et  fast  forward  le traitement  (Si  -d  et  -f  choisie  -f  a la priorité)  
 *  Choix du mode de traitement  
 	*  **-d**  |  Télécharge uniquement les fichiers  (Si  -d  et  -f  choisit  -f  a la priorité)  
-	*  **-m  s**  |  Choisit la méthode de filtration  -->  s=cons: Concervative(défaut),  s=exhau: Exhaustive,  s=both: Les deux  
+	*  **-m  s**  |  Choisit la méthode de filtration  -->  s=cons: Conservative(défaut),  s=exhau: Exhaustive,  s=both: Les deux  
 Les valeurs des filtres sont respectivement  _Todo  : Rendre  les valeurs/filtres customisables_  
 		*  Conservative : QD  < 11.0  ||  FS > 5.0  ||  MQ  < 58.0  ||  SOR  > 1.3  ||  MQRankSum  < -0.5  ||  MQRankSum  > 0.5  ||  ReadPosRankSum  < -0.5  ||  ReadPosRankSum  > 0.5  
 		*  Exhaustive : QD  < 5.0  ||  FS > 15.0  ||  MQ  < 54.0  ||  SOR  > 2.5  ||  MQRankSum  < -2.5  ||  MQRankSum  > 2.5  ||  ReadPosRankSum  < -1.3  ||  ReadPosRankSum  > 1.3  
@@ -48,7 +48,8 @@ Voir l'option  **-k**  pour une liste des fichiers  intermédiaires  conservable
 Extrait et filtre les  SNP  du  VCF  dans  _studyAccession_snp_cons_PASS.vcf_  ou/et  _studyAccession_snp_exhau_PASS.vcf_  en fonction du mode de filtration choisit  
 Dans  _Dossier/Résultats/_  sont disponibles les informations suivantes  
 *  _flagstat.txt_  , le nombre de  read  et le pourcentage mappé au génome de référence  
-*  _cov.txt_  , le taux de couverture de  moyen/min/max  de chaque échantillon, voir les fichiers  _cov  pour la couverture de chaque zone génétique  
-*  _snp_indel.txt_  , le nombre de sites variant dans notre  VCF  et la proportion  SNP/INDEL. (Calculé  par  gatk  et par un script équivalent)  
+*  _cov.txt_  , le taux de couverture de  moyen/min/max  de chaque échantillon, voir les fichiers  _cov  pour la couverture de chaque zone génétique
+:warning: NB: cov.sh peut avoir des soucis de durée, commenter la ligne 40 de pipeline.sh pour éviter d'attendre longtemps sur cette partie :warning:
+*  _snp_indel.txt_  , le nombre de sites variants dans notre  VCF  et la proportion  SNP/INDEL. (Calculé  par  gatk  et par un script équivalent)  
 *  _studyAccession_snp_filtres_Filtres  et Diagrammes de  Venn.pdf_  , des figures montrant l'effet des filtres sur les  SNP  
 *  _studyAccession_snp_exhau_PASS_PCA.pdf_  et/ou  _studyAccession_snp_exhau_PASS_PCA.pdf_  , une représentation en deux dimensions des échantillons
