@@ -29,7 +29,7 @@ then
     fi
   done
   average=$(echo "$total / $nb_lines" | bc -l)
-  echo "Coverage of $filename : Average = $average  min $min max $max" >> "$dir"/Résultats/Cov.txt
+  echo "Coverage of $filename : Average = $average  min $min max $max" >> "$dir"/Résultats/cov.txt
   if [ -z "$keep" ]
   then
     rm "$dir"/"$filename"_cov

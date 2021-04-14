@@ -66,14 +66,14 @@ function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquent
 
   if [ $filterMode == "cons" ] || [ $filterMode == "both" ]
   then
-    gatk VariantFiltration -R $fasta -V "$dir/$stdacc"_snp.vcf.gz -O "$dir/$stdacc"_snp_cons.vcf.gz -filter "QD < 11.0 || FS > 5.0 || MQ < 58.0 || SOR > 1.3 || MQRankSum < -0.5 || MQRankSum > 0.5 || ReadPosRankSum < -0.5 || ReadPosRankSum > 0.5" --filter-name "6filtres"
+    gatk VariantFiltration -R $fasta -V "$dir/$stdacc"_snp.vcf.gz -O "$dir/$stdacc"_snp_cons.vcf.gz -filter "QD < 11.0 || FS > 5.0 || MQ < 58.0 || SOR > 1.3 || MQRankSum < -0.5 || MQRankSum > 0.5 || ReadPosRankSum < -0.5 || ReadPosRankSum > 0.5" --filter-name "6filtrescons"
     vcftools --gzvcf "$dir/$stdacc"_snp_cons.vcf.gz --remove-filtered-all --recode --stdout  > "$dir/$stdacc"_snp_cons_PASS.vcf
     Rscript Arbre.R "$dir" "$stdacc"_snp_cons_PASS
   fi
 
   if [ $filterMode == "exhau" ] || [ $filterMode == "both" ]
   then
-    gatk VariantFiltration -R $fasta -V "$dir/$stdacc"_snp.vcf.gz -O "$dir/$stdacc"_snp_exhau.vcf.gz -filter "QD < 5.0 || FS > 15.0 || MQ < 54.0 || SOR > 2.5 || MQRankSum < -2.5 || MQRankSum > 2.5 || ReadPosRankSum < -1.3 || ReadPosRankSum > 1.3" --filter-name "6filtres"
+    gatk VariantFiltration -R $fasta -V "$dir/$stdacc"_snp.vcf.gz -O "$dir/$stdacc"_snp_exhau.vcf.gz -filter "QD < 5.0 || FS > 15.0 || MQ < 54.0 || SOR > 2.5 || MQRankSum < -2.5 || MQRankSum > 2.5 || ReadPosRankSum < -1.3 || ReadPosRankSum > 1.3" --filter-name "6filtresexhau"
     vcftools --gzvcf "$dir/$stdacc"_snp_exhau.vcf.gz --remove-filtered-all --recode --stdout > "$dir/$stdacc"_snp_exhau_PASS.vcf
     Rscript Arbre.R "$dir" "$stdacc"_snp_exhau_PASS
   fi
