@@ -49,7 +49,7 @@ Extrait et filtre les  SNP  du  VCF  dans  _studyAccession_snp_cons_PASS.vcf_  o
 Dans  _Dossier/Résultats/_  sont disponibles les informations suivantes  
 *  _flagstat.txt_  , le nombre de  read  et le pourcentage mappé au génome de référence  
 *  _cov.txt_  , le taux de couverture de  moyen/min/max  de chaque échantillon, voir les fichiers  _cov  pour la couverture de chaque zone génétique
-:warning: NB: cov.sh peut avoir des soucis de durée, commenter la ligne 40 de pipeline.sh pour éviter d'attendre longtemps sur cette partie :warning:
+:warning: NB: cov.sh peut avoir des soucis de durée en fonction de l'OS en particulier sur une VM, commentez la ligne 40 de pipeline.sh si cette partie optionnelle au pipeline bloque l'exécution trop longtemps  :warning:
 *  _snp_indel.txt_  , le nombre de sites variants dans notre  VCF  et la proportion  SNP/INDEL. (Calculé  par  gatk  et par un script équivalent)  
 *  _studyAccession_snp_filtres_Filtres  et Diagrammes de  Venn.pdf_  , des figures montrant l'effet des filtres sur les  SNP  
 *  _studyAccession_snp_exhau_PASS_PCA.pdf_  et/ou  _studyAccession_snp_exhau_PASS_PCA.pdf_  , une représentation en deux dimensions des échantillons
