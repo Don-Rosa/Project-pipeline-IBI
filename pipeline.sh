@@ -34,12 +34,12 @@ function boucle_seq(){      # Pour les opérations qu'on veut effectuer séquent
   IFS=$'\n'
   for line in $(cat "$tsv")
   do
-    if (( $j >= $begin )) && ( [ -z $end ] || (( $j <= $end )) )
-    then
+    #if (( $j >= $begin )) && ( [ -z $end ] || (( $j <= $end )) )
+    #then
       bash flagstat.sh "$dir" "$line"
-      bash cov.sh "$dir" "$line" "$keep"
-    fi
-    ((j++))
+      #bash cov.sh "$dir" "$line" "$keep" # Malgrés une optimisation du script cov.sh (Pas de cut et | pour ne pas invoquer un shell par ligne)
+    #fi                                   # Les performances varient énormément d'un ordinateur à l'autre, 10 minutes chez Jérémie, au moins 5 heures chez Mathieu sans raisons apparentes
+    #((j++))                              # Commentez la ligne 40 avec bash cov.sh si vous restez bloqué trop longtemps
   done
   bash Database.sh "$dir" "$tsv"
   stdacc=$(cat "sampleAlias_md5_fastq_studyAccession.tsv" | cut -d$'\n' -f 2 | cut -d$'\t' -f 4)  #Récupère le nom de l'étude

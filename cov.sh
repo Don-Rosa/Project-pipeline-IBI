@@ -5,7 +5,7 @@ tsv_line="$2"                 # On explicite les parametres
 keep="$3"
 
 filename=$(echo "$tsv_line" | cut -d$'\t' -f 1)
-if [ "$filename" != "sample_alias" ] && [ "$filename" != "" ] #On zappe la première ligne et les lignes vides
+if [ "$filename" != "sample_alias" ] && [ "$filename" != "UFMG-CM-Y030" ] #On zappe la première ligne et les lignes vides
 then
   min=99999  #de la merde, à changer
   max=0

@@ -8,7 +8,7 @@ tsv_line="$2"  # On explicite les parametres
 filename=$(echo "$tsv_line" | cut -d$'\t' -f 1)
 outpoutdir="$dir"/Résultats
 
-if [ "$filename" != "sample_alias" ] && [ "$filename" != "" ] #On zappe la première ligne et les lignes vides
+if [ "$filename" != "sample_alias" ] && [ "$filename" != "UFMG-CM-Y030" ] #On zappe la première ligne et les lignes vides
 then
   outpout="$outpoutdir"/"$filename"
   samtools flagstat "$dir"/"$filename"_sorted.bam > "$outpout"~.txt
